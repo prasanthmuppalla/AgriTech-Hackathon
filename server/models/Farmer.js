@@ -1,19 +1,41 @@
 const mongoose = require('mongoose')
 
 const farmerSchema = new mongoose.Schema({
+  // Aadhaar-based Authentication
+  aadhaarNumber: {
+    type: String,
+    required: true,
+    unique: true,
+    length: 12,
+    index: true
+  },
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  fatherName: {
+    type: String,
+    required: true,
+    trim: true
+  },
   phone: {
     type: String,
     required: true,
     unique: true,
     match: /^[6-9]\d{9}$/
   },
-  name: {
-    type: String,
-    required: true
-  },
   isVerified: {
     type: Boolean,
     default: false
+  },
+  lastLogin: {
+    type: Date,
+    default: Date.now
+  },
+  loginCount: {
+    type: Number,
+    default: 0
   },
   profile: {
     language: {
@@ -32,7 +54,7 @@ const farmerSchema = new mongoose.Schema({
       }
     },
     farmDetails: {
-      totalLand: Number, // in acres
+      totalLand: String, // e.g., "2.5 acres"
       crops: [{
         name: String,
         area: Number,
@@ -117,6 +139,7 @@ const farmerSchema = new mongoose.Schema({
 })
 
 // Indexes for better performance
+farmerSchema.index({ aadhaarNumber: 1 })
 farmerSchema.index({ phone: 1 })
 farmerSchema.index({ 'profile.location.district': 1 })
 farmerSchema.index({ 'welfare.rationCard.number': 1 })

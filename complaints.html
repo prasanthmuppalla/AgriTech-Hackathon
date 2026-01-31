@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint System - Farmer Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&family=Noto+Sans+Telugu:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(220, 38, 38, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #374151;
+            font-weight: 500;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .btn-secondary:hover {
+            border-color: #dc2626;
+            color: #dc2626;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+        
+        .textarea-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .textarea-field:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-reviewing {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-resolved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .credit-badge {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hindi-font { font-family: 'Noto Sans Devanagari', sans-serif; }
+        .telugu-font { font-family: 'Noto Sans Telugu', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-red-50 via-white to-orange-50 min-h-screen">
+    <!-- Header -->
+    <div class="gradient-bg text-white p-6 shadow-2xl">
+        <div class="container mx-auto">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <button onclick="goBack()" class="p-3 bg-white/20 rounded-xl hover:bg-white/30 transition-colors">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-comments text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold" data-translate="complaint-system">Complaint System</h1>
+                        <p class="text-white/90" data-translate="complaint-subtitle">File complaints and track resolution</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <!-- Credits Display -->
+                    <div class="credit-badge">
+                        <i class="fas fa-coins"></i>
+                        <span id="credit-balance">0</span>
+                        <span data-translate="credits">Credits</span>
+                    </div>
+                    <button onclick="changeLanguage()" class="p-3 bg-white/20 rounded-xl hover:bg-white/30 transition-colors">
+                        <i class="fas fa-language"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Quick Actions -->
+        <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <!-- File New Complaint -->
+            <div class="card slide-in">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-plus-circle text-red-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2" data-translate="file-new-complaint">File New Complaint</h3>
+                    <p class="text-gray-600" data-translate="complaint-desc">Report issues to authorities and get resolution</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="complaint-category">Complaint Category</label>
+                        <select id="complaint-category" class="input-field">
+                            <option value="" data-translate="select-category">Select Category</option>
+                            <option value="ration" data-translate="ration-issues">Ration Distribution Issues</option>
+                            <option value="water" data-translate="water-supply">Water Supply Problems</option>
+                            <option value="electricity" data-translate="electricity">Electricity Issues</option>
+                            <option value="road" data-translate="road-infrastructure">Road & Infrastructure</option>
+                            <option value="healthcare" data-translate="healthcare">Healthcare Services</option>
+                            <option value="agriculture" data-translate="agriculture-support">Agriculture Support</option>
+                            <option value="corruption" data-translate="corruption">Corruption/Bribery</option>
+                            <option value="other" data-translate="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="priority">Priority Level</label>
+                        <select id="complaint-priority" class="input-field">
+                            <option value="low" data-translate="low">Low</option>
+                            <option value="medium" data-translate="medium" selected>Medium</option>
+                            <option value="high" data-translate="high">High</option>
+                            <option value="urgent" data-translate="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="complaint-title">Complaint Title</label>
+                        <input type="text" id="complaint-title" class="input-field" placeholder="Brief description of the issue">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="complaint-description">Detailed Description</label>
+                        <textarea id="complaint-description" class="textarea-field" placeholder="Provide detailed information about the issue, location, and impact"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="location">Location</label>
+                        <input type="text" id="complaint-location" class="input-field" placeholder="Village, District, State">
+                    </div>
+                    
+                    <button onclick="submitComplaint()" class="btn-primary w-full">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        <span data-translate="submit-complaint">Submit Complaint</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Credit Information -->
+            <div class="card slide-in">
+                <h3 class="text-xl font-bold text-gray-900 mb-6" data-translate="credit-system">Credit Reward System</h3>
+                
+                <div class="space-y-6">
+                    <!-- Current Credits -->
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-green-800" data-translate="available-credits">Available Credits</h4>
+                            <div class="credit-badge">
+                                <i class="fas fa-coins"></i>
+                                <span id="total-credits">0</span>
+                            </div>
+                        </div>
+                        <p class="text-green-700 text-sm" data-translate="credit-info">Earn credits when your complaints are resolved successfully</p>
+                    </div>
+                    
+                    <!-- How to Earn Credits -->
+                    <div class="space-y-3">
+                        <h4 class="font-semibold text-gray-900" data-translate="earn-credits">How to Earn Credits</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-3 text-sm">
+                                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <span data-translate="resolved-complaint">Resolved Complaint: +10 Credits</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                <span data-translate="urgent-resolved">Urgent Issue Resolved: +25 Credits</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm">
+                                <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
+                                <span data-translate="feedback-bonus">Feedback Bonus: +5 Credits</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Use Credits -->
+                    <div class="space-y-3">
+                        <h4 class="font-semibold text-gray-900" data-translate="use-credits">Use Your Credits</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-3 text-sm">
+                                <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                                <span data-translate="extra-ration">Extra Ration: 20 Credits = 1kg Rice</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm">
+                                <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                                <span data-translate="priority-support">Priority Support: 15 Credits</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm">
+                                <div class="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                                <span data-translate="scheme-info">Scheme Information: 5 Credits</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="openCreditStore()" class="btn-secondary w-full">
+                        <i class="fas fa-store mr-2"></i>
+                        <span data-translate="credit-store">Credit Store</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- My Complaints -->
+        <div class="card slide-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900" data-translate="my-complaints">My Complaints</h3>
+                <button onclick="refreshComplaints()" class="btn-secondary">
+                    <i class="fas fa-refresh mr-2"></i>
+                    <span data-translate="refresh">Refresh</span>
+                </button>
+            </div>
+            
+            <div id="complaints-list" class="space-y-4">
+                <!-- Sample Complaints -->
+                <div class="flex items-center justify-between p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-xl">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h4 class="font-semibold text-gray-900">Water Supply Disruption</h4>
+                            <span class="status-badge status-reviewing" data-translate="under-review">Under Review</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">No water supply for 3 days in Rampur village</p>
+                        <div class="flex items-center gap-4 text-xs text-gray-500">
+                            <span><i class="fas fa-calendar mr-1"></i>Filed: 2 days ago</span>
+                            <span><i class="fas fa-clock mr-1"></i>Expected: 3-5 days</span>
+                            <span><i class="fas fa-user mr-1"></i>Assigned: Water Dept.</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="btn-secondary text-sm">
+                            <i class="fas fa-eye mr-1"></i>
+                            <span data-translate="view">View</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between p-4 bg-green-50 border-l-4 border-green-500 rounded-xl">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h4 class="font-semibold text-gray-900">Ration Card Issue</h4>
+                            <span class="status-badge status-resolved" data-translate="resolved">Resolved</span>
+                            <div class="credit-badge text-xs">
+                                <i class="fas fa-plus"></i>
+                                <span>+10 Credits</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Ration card not working at distribution center</p>
+                        <div class="flex items-center gap-4 text-xs text-gray-500">
+                            <span><i class="fas fa-calendar mr-1"></i>Resolved: 1 week ago</span>
+                            <span><i class="fas fa-check-circle mr-1 text-green-500"></i>Credits Awarded</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="btn-secondary text-sm">
+                            <i class="fas fa-star mr-1"></i>
+                            <span data-translate="rate">Rate</span>
+                        </button>
+                        <button class="btn-secondary text-sm">
+                            <i class="fas fa-eye mr-1"></i>
+                            <span data-translate="view">View</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Helpline Numbers -->
+        <div class="card slide-in mt-8">
+            <h3 class="text-xl font-bold text-gray-900 mb-6" data-translate="emergency-helpline">Emergency Helpline Numbers</h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="p-4 bg-red-50 rounded-xl border border-red-200">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="fas fa-phone text-red-600"></i>
+                        <span class="font-semibold text-red-800" data-translate="district-collector">District Collector</span>
+                    </div>
+                    <p class="text-red-700 font-bold">1800-180-1551</p>
+                </div>
+                
+                <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="fas fa-tint text-blue-600"></i>
+                        <span class="font-semibold text-blue-800" data-translate="water-department">Water Department</span>
+                    </div>
+                    <p class="text-blue-700 font-bold">1800-180-1552</p>
+                </div>
+                
+                <div class="p-4 bg-yellow-50 rounded-xl border border-yellow-200">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="fas fa-bolt text-yellow-600"></i>
+                        <span class="font-semibold text-yellow-800" data-translate="electricity-board">Electricity Board</span>
+                    </div>
+                    <p class="text-yellow-700 font-bold">1800-180-1553</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Credit Store Modal -->
+    <div id="credit-store-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900" data-translate="credit-store">Credit Store</h3>
+                <button onclick="closeCreditStore()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="flex justify-between items-center p-4 border border-gray-200 rounded-xl">
+                    <div>
+                        <span class="font-medium" data-translate="extra-rice">Extra Rice (1kg)</span>
+                        <p class="text-sm text-gray-600" data-translate="rice-desc">Additional rice quota</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-orange-600">20 Credits</p>
+                        <button class="btn-primary text-sm mt-2" onclick="redeemCredit('rice', 20)">
+                            <span data-translate="redeem">Redeem</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-center p-4 border border-gray-200 rounded-xl">
+                    <div>
+                        <span class="font-medium" data-translate="priority-support">Priority Support</span>
+                        <p class="text-sm text-gray-600" data-translate="priority-desc">Fast-track complaint resolution</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-orange-600">15 Credits</p>
+                        <button class="btn-primary text-sm mt-2" onclick="redeemCredit('priority', 15)">
+                            <span data-translate="redeem">Redeem</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLanguage = 'en';
+        let farmerData = {};
+        let creditBalance = 0;
+
+        // Language translations
+        const translations = {
+            en: {
+                'complaint-system': 'Complaint System',
+                'complaint-subtitle': 'File complaints and track resolution',
+                'credits': 'Credits',
+                'file-new-complaint': 'File New Complaint',
+                'complaint-desc': 'Report issues to authorities and get resolution',
+                'complaint-category': 'Complaint Category',
+                'select-category': 'Select Category',
+                'ration-issues': 'Ration Distribution Issues',
+                'water-supply': 'Water Supply Problems',
+                'electricity': 'Electricity Issues',
+                'road-infrastructure': 'Road & Infrastructure',
+                'healthcare': 'Healthcare Services',
+                'agriculture-support': 'Agriculture Support',
+                'corruption': 'Corruption/Bribery',
+                'other': 'Other',
+                'priority': 'Priority Level',
+                'low': 'Low',
+                'medium': 'Medium',
+                'high': 'High',
+                'urgent': 'Urgent',
+                'complaint-title': 'Complaint Title',
+                'complaint-description': 'Detailed Description',
+                'location': 'Location',
+                'submit-complaint': 'Submit Complaint',
+                'credit-system': 'Credit Reward System',
+                'available-credits': 'Available Credits',
+                'credit-info': 'Earn credits when your complaints are resolved successfully',
+                'earn-credits': 'How to Earn Credits',
+                'resolved-complaint': 'Resolved Complaint: +10 Credits',
+                'urgent-resolved': 'Urgent Issue Resolved: +25 Credits',
+                'feedback-bonus': 'Feedback Bonus: +5 Credits',
+                'use-credits': 'Use Your Credits',
+                'extra-ration': 'Extra Ration: 20 Credits = 1kg Rice',
+                'priority-support': 'Priority Support: 15 Credits',
+                'scheme-info': 'Scheme Information: 5 Credits',
+                'credit-store': 'Credit Store',
+                'my-complaints': 'My Complaints',
+                'refresh': 'Refresh',
+                'under-review': 'Under Review',
+                'resolved': 'Resolved',
+                'view': 'View',
+                'rate': 'Rate',
+                'emergency-helpline': 'Emergency Helpline Numbers',
+                'district-collector': 'District Collector',
+                'water-department': 'Water Department',
+                'electricity-board': 'Electricity Board',
+                'extra-rice': 'Extra Rice (1kg)',
+                'rice-desc': 'Additional rice quota',
+                'priority-desc': 'Fast-track complaint resolution',
+                'redeem': 'Redeem'
+            },
+            hi: {
+                'complaint-system': 'शिकायत प्रणाली',
+                'complaint-subtitle': 'शिकायत दर्ज करें और समाधान ट्रैक करें',
+                'credits': 'क्रेडिट',
+                'file-new-complaint': 'नई शिकायत दर्ज करें',
+                'complaint-desc': 'अधिकारियों को समस्याओं की रिपोर्ट करें और समाधान पाएं',
+                'complaint-category': 'शिकायत श्रेणी',
+                'select-category': 'श्रेणी चुनें',
+                'ration-issues': 'राशन वितरण समस्याएं',
+                'water-supply': 'पानी की आपूर्ति की समस्याएं',
+                'electricity': 'बिजली की समस्याएं',
+                'road-infrastructure': 'सड़क और बुनियादी ढांचा',
+                'healthcare': 'स्वास्थ्य सेवाएं',
+                'agriculture-support': 'कृषि सहायता',
+                'corruption': 'भ्रष्टाचार/रिश्वतखोरी',
+                'other': 'अन्य',
+                'priority': 'प्राथमिकता स्तर',
+                'low': 'कम',
+                'medium': 'मध्यम',
+                'high': 'उच्च',
+                'urgent': 'तत्काल',
+                'complaint-title': 'शिकायत शीर्षक',
+                'complaint-description': 'विस्तृत विवरण',
+                'location': 'स्थान',
+                'submit-complaint': 'शिकायत जमा करें',
+                'credit-system': 'क्रेडिट पुरस्कार प्रणाली',
+                'available-credits': 'उपलब्ध क्रेडिट',
+                'credit-info': 'जब आपकी शिकायतों का सफलतापूर्वक समाधान हो जाता है तो क्रेडिट अर्जित करें',
+                'earn-credits': 'क्रेडिट कैसे अर्जित करें',
+                'resolved-complaint': 'हल की गई शिकायत: +10 क्रेडिट',
+                'urgent-resolved': 'तत्काल समस्या हल: +25 क्रेडिट',
+                'feedback-bonus': 'फीडबैक बोनस: +5 क्रेडिट',
+                'use-credits': 'अपने क्रेडिट का उपयोग करें',
+                'extra-ration': 'अतिरिक्त राशन: 20 क्रेडिट = 1 किलो चावल',
+                'priority-support': 'प्राथमिकता सहायता: 15 क्रेडिट',
+                'scheme-info': 'योजना जानकारी: 5 क्रेडिट',
+                'credit-store': 'क्रेडिट स्टोर',
+                'my-complaints': 'मेरी शिकायतें',
+                'refresh': 'रीफ्रेश',
+                'under-review': 'समीक्षाधीन',
+                'resolved': 'हल हो गया',
+                'view': 'देखें',
+                'rate': 'रेटिंग दें',
+                'emergency-helpline': 'आपातकालीन हेल्पलाइन नंबर',
+                'district-collector': 'जिला कलेक्टर',
+                'water-department': 'जल विभाग',
+                'electricity-board': 'विद्युत बोर्ड',
+                'extra-rice': 'अतिरिक्त चावल (1 किलो)',
+                'rice-desc': 'अतिरिक्त चावल कोटा',
+                'priority-desc': 'तेज़ शिकायत समाधान',
+                'redeem': 'रिडीम करें'
+            },
+            te: {
+                'complaint-system': 'ఫిర్యాదు వ్యవస్థ',
+                'complaint-subtitle': 'ఫిర్యాదులు దాఖలు చేయండి మరియు పరిష్కారాన్ని ట్రాక్ చేయండి',
+                'credits': 'క్రెడిట్స్',
+                'file-new-complaint': 'కొత్త ఫిర్యాదు దాఖలు చేయండి',
+                'complaint-desc': 'అధికారులకు సమస్యలను నివేదించండి మరియు పరిష్కారం పొందండి',
+                'complaint-category': 'ఫిర్యాదు వర్గం',
+                'select-category': 'వర్గాన్ని ఎంచుకోండి',
+                'ration-issues': 'రేషన్ పంపిణీ సమస్యలు',
+                'water-supply': 'నీటి సరఫరా సమస్యలు',
+                'electricity': 'విద్యుత్ సమస్యలు',
+                'road-infrastructure': 'రోడ్డు మరియు మౌలిక సదుపాయాలు',
+                'healthcare': 'ఆరోగ్య సేవలు',
+                'agriculture-support': 'వ్యవసాయ మద్దతు',
+                'corruption': 'అవినీతి/లంచం',
+                'other': 'ఇతర',
+                'priority': 'ప్రాధాన్యత స్థాయి',
+                'low': 'తక్కువ',
+                'medium': 'మధ్యమ',
+                'high': 'అధిక',
+                'urgent': 'అత్యవసర',
+                'complaint-title': 'ఫిర్యాదు శీర్షిక',
+                'complaint-description': 'వివరణాత్మక వివరణ',
+                'location': 'స్థానం',
+                'submit-complaint': 'ఫిర్యాదు సమర్పించండి',
+                'credit-system': 'క్రెడిట్ రివార్డ్ సిస్టమ్',
+                'available-credits': 'అందుబాటులో ఉన్న క్రెడిట్స్',
+                'credit-info': 'మీ ఫిర్యాదులు విజయవంతంగా పరిష్కరించబడినప్పుడు క్రెడిట్స్ సంపాదించండి',
+                'earn-credits': 'క్రెడిట్స్ ఎలా సంపాదించాలి',
+                'resolved-complaint': 'పరిష్కరించబడిన ఫిర్యాదు: +10 క్రెడిట్స్',
+                'urgent-resolved': 'అత్యవసర సమస్య పరిష్కరించబడింది: +25 క్రెడిట్స్',
+                'feedback-bonus': 'ఫీడ్‌బ్యాక్ బోనస్: +5 క్రెడిట్స్',
+                'use-credits': 'మీ క్రెడిట్స్ ఉపయోగించండి',
+                'extra-ration': 'అదనపు రేషన్: 20 క్రెడిట్స్ = 1కిలో బియ్యం',
+                'priority-support': 'ప్రాధాన్యత మద్దతు: 15 క్రెడిట్స్',
+                'scheme-info': 'పథకం సమాచారం: 5 క్రెడిట్స్',
+                'credit-store': 'క్రెడిట్ స్టోర్',
+                'my-complaints': 'నా ఫిర్యాదులు',
+                'refresh': 'రిఫ్రెష్',
+                'under-review': 'సమీక్షలో',
+                'resolved': 'పరిష్కరించబడింది',
+                'view': 'చూడండి',
+                'rate': 'రేటింగ్ ఇవ్వండి',
+                'emergency-helpline': 'అత్యవసర హెల్ప్‌లైన్ నంబర్లు',
+                'district-collector': 'జిల్లా కలెక్టర్',
+                'water-department': 'నీటి శాఖ',
+                'electricity-board': 'విద్యుత్ బోర్డు',
+                'extra-rice': 'అదనపు బియ్యం (1కిలో)',
+                'rice-desc': 'అదనపు బియ్యం కోటా',
+                'priority-desc': 'వేగవంతమైన ఫిర్యాదు పరిష్కారం',
+                'redeem': 'రిడీమ్ చేయండి'
+            }
+        };
+
+        // Load language and farmer data
+        function loadData() {
+            currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
+            const storedData = localStorage.getItem('farmerData');
+            
+            if (storedData) {
+                farmerData = JSON.parse(storedData);
+            }
+            
+            // Load credit balance (demo data)
+            creditBalance = parseInt(localStorage.getItem('creditBalance')) || 25;
+            updateCreditDisplay();
+            
+            translatePage();
+        }
+
+        // Update credit display
+        function updateCreditDisplay() {
+            document.getElementById('credit-balance').textContent = creditBalance;
+            document.getElementById('total-credits').textContent = creditBalance;
+        }
+
+        // Translate page content
+        function translatePage() {
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[currentLanguage][key]) {
+                    element.textContent = translations[currentLanguage][key];
+                }
+            });
+            
+            // Apply appropriate font
+            if (currentLanguage === 'hi') {
+                document.body.classList.add('hindi-font');
+                document.body.classList.remove('telugu-font');
+            } else if (currentLanguage === 'te') {
+                document.body.classList.add('telugu-font');
+                document.body.classList.remove('hindi-font');
+            } else {
+                document.body.classList.remove('hindi-font', 'telugu-font');
+            }
+        }
+
+        // Submit complaint
+        function submitComplaint() {
+            const category = document.getElementById('complaint-category').value;
+            const priority = document.getElementById('complaint-priority').value;
+            const title = document.getElementById('complaint-title').value;
+            const description = document.getElementById('complaint-description').value;
+            const location = document.getElementById('complaint-location').value;
+
+            if (!category || !title || !description) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = event.target;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
+            submitBtn.disabled = true;
+
+            // Simulate API call
+            setTimeout(() => {
+                showNotification('Complaint submitted successfully! Complaint ID: #CP' + Date.now().toString().slice(-6), 'success');
+                
+                // Clear form
+                document.getElementById('complaint-category').value = '';
+                document.getElementById('complaint-title').value = '';
+                document.getElementById('complaint-description').value = '';
+                document.getElementById('complaint-location').value = '';
+                
+                // Reset button
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Submit Complaint';
+                submitBtn.disabled = false;
+                
+                // Refresh complaints list
+                refreshComplaints();
+            }, 2000);
+        }
+
+        // Open credit store
+        function openCreditStore() {
+            document.getElementById('credit-store-modal').classList.remove('hidden');
+        }
+
+        // Close credit store
+        function closeCreditStore() {
+            document.getElementById('credit-store-modal').classList.add('hidden');
+        }
+
+        // Redeem credit
+        function redeemCredit(type, cost) {
+            if (creditBalance < cost) {
+                alert('Insufficient credits! You need ' + cost + ' credits.');
+                return;
+            }
+
+            if (confirm('Redeem ' + cost + ' credits for this item?')) {
+                creditBalance -= cost;
+                localStorage.setItem('creditBalance', creditBalance);
+                updateCreditDisplay();
+                
+                showNotification('Credits redeemed successfully!', 'success');
+                closeCreditStore();
+            }
+        }
+
+        // Refresh complaints
+        function refreshComplaints() {
+            showNotification('Complaints refreshed', 'info');
+        }
+
+        // Go back to dashboard
+        function goBack() {
+            window.location.href = 'dashboard.html';
+        }
+
+        // Change language
+        function changeLanguage() {
+            window.location.href = 'language-selection.html';
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-2xl shadow-2xl max-w-sm slide-in`;
+            
+            const colors = {
+                success: 'bg-green-500 text-white',
+                error: 'bg-red-500 text-white',
+                info: 'bg-blue-500 text-white',
+                warning: 'bg-yellow-500 text-black'
+            };
+            
+            const icons = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                info: 'fas fa-info-circle',
+                warning: 'fas fa-exclamation-triangle'
+            };
+            
+            notification.className += ` ${colors[type]}`;
+            notification.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <i class="${icons[type]}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            if (!localStorage.getItem('isLoggedIn')) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            loadData();
+        });
+    </script>
+</body>
+</html>

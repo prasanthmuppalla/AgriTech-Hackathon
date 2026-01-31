@@ -27,6 +27,8 @@ app.use('/api/marketplace', require('./routes/marketplace'))
 app.use('/api/advisory', require('./routes/advisory'))
 app.use('/api/welfare', require('./routes/welfare'))
 app.use('/api/farmers', require('./routes/farmers'))
+app.use('/api/complaints', require('./routes/complaints'))
+app.use('/api/ration', require('./routes/ration'))
 
 // Health check
 app.get('/health', (req, res) => {

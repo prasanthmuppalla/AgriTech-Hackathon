@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "seed": "node scripts/seedDatabase.js",
+    "db:setup": "node scripts/seedDatabase.js",
+    "db:reset": "node scripts/seedDatabase.js",
+    "test-db": "mongosh --eval \"db.adminCommand('ping')\" agritech_platform"
   },
   "dependencies": {
     "express": "^4.18.2",
