@@ -222,6 +222,14 @@ npm run dev
 - **Database**: MongoDB Atlas
 - **AI Service**: Google Cloud Run/AWS Lambda
 
+## 🌐 **Live Demo & Repository**
+
+- **🚀 Live Demo**: [https://prasanthmuppalla.github.io/AgriTech-Hackathon/login.html](https://prasanthmuppalla.github.io/AgriTech-Hackathon/login.html)
+- **📂 GitHub Repository**: [https://github.com/prasanthmuppalla/AgriTech-Hackathon](https://github.com/prasanthmuppalla/AgriTech-Hackathon)
+- **📱 Demo Credentials**: 
+  - Aadhaar: `123456789012`, `234567890123`, `345678901234`
+  - OTP: Any 6-digit code
+
 ## 🤝 **Contributing**
 
 1. **Fork** the repository
@@ -243,9 +251,9 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 📞 **Support**
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/agritech-platform/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/agritech-platform/discussions)
-- **Email**: support@agritech-platform.com
+- **Issues**: [GitHub Issues](https://github.com/prasanthmuppalla/AgriTech-Hackathon/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/prasanthmuppalla/AgriTech-Hackathon/discussions)
+- **Repository**: [https://github.com/prasanthmuppalla/AgriTech-Hackathon](https://github.com/prasanthmuppalla/AgriTech-Hackathon)
 
 ---
 
