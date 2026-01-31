@@ -127,6 +127,57 @@
             height: 100%;
             background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
         }
+        
+        .time-slot {
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .time-slot:hover {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+        
+        .time-slot.selected {
+            border-color: #2563eb;
+            background: #2563eb;
+            color: white;
+        }
+        
+        .time-slot.unavailable {
+            background: #f3f4f6;
+            color: #9ca3af;
+            cursor: not-allowed;
+            border-color: #d1d5db;
+        }
+        
+        .time-slot.unavailable:hover {
+            border-color: #d1d5db;
+            background: #f3f4f6;
+        }
+        
+        .availability-free {
+            background: #dcfce7;
+            border-color: #16a34a;
+            color: #15803d;
+        }
+        
+        .availability-moderate {
+            background: #fef3c7;
+            border-color: #d97706;
+            color: #92400e;
+        }
+        
+        .availability-busy {
+            background: #fee2e2;
+            border-color: #dc2626;
+            color: #991b1b;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-white to-indigo-50 min-h-screen">
@@ -288,7 +339,7 @@
             </div>
         </div>
         
-        <!-- QR Scanner & Distribution Centers -->
+        <!-- QR Scanner & Slot Booking -->
         <div class="grid md:grid-cols-2 gap-8 mb-8">
             <!-- QR Scanner -->
             <div class="card slide-in">
@@ -313,38 +364,165 @@
                 </div>
             </div>
             
-            <!-- Distribution Centers -->
+            <!-- Slot Booking System -->
             <div class="card slide-in">
-                <h3 class="text-xl font-bold text-gray-900 mb-6" data-translate="distribution-centers">Distribution Centers</h3>
+                <h3 class="text-xl font-bold text-gray-900 mb-6" data-translate="slot-booking">Slot Booking</h3>
                 
                 <div class="space-y-4">
-                    <div class="p-4 border border-gray-200 rounded-xl">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-semibold text-gray-900">Rampur Primary Center</h4>
-                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium" data-translate="open">Open</span>
+                    <!-- Current Booking Status -->
+                    <div id="current-booking" class="p-4 bg-green-50 border border-green-200 rounded-xl hidden">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i class="fas fa-calendar-check text-green-600"></i>
+                            <span class="font-semibold text-green-800" data-translate="booking-confirmed">Booking Confirmed</span>
                         </div>
-                        <p class="text-sm text-gray-600 mb-2">Village Road, Rampur - 250001</p>
-                        <div class="flex items-center gap-4 text-xs text-gray-500 mb-3">
-                            <span><i class="fas fa-clock mr-1"></i>9 AM - 5 PM</span>
-                            <span><i class="fas fa-phone mr-1"></i>+91 98765 43210</span>
+                        <div class="text-sm text-green-700">
+                            <p><strong data-translate="date">Date:</strong> <span id="booked-date">15th February 2024</span></p>
+                            <p><strong data-translate="time-slot">Time Slot:</strong> <span id="booked-time">10:00 AM - 11:00 AM</span></p>
+                            <p><strong data-translate="center">Center:</strong> <span id="booked-center">Rampur Primary Center</span></p>
                         </div>
-                        <button class="btn-secondary text-sm w-full">
+                        <div class="flex gap-2 mt-3">
+                            <button onclick="modifyBooking()" class="btn-secondary text-xs">
+                                <i class="fas fa-edit mr-1"></i>
+                                <span data-translate="modify">Modify</span>
+                            </button>
+                            <button onclick="cancelBooking()" class="btn-secondary text-xs">
+                                <i class="fas fa-times mr-1"></i>
+                                <span data-translate="cancel">Cancel</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Booking Form -->
+                    <div id="booking-form">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="select-date">Select Date</label>
+                                <input type="date" id="booking-date" class="w-full p-3 border border-gray-300 rounded-xl" min="">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="select-center">Select Center</label>
+                                <select id="booking-center" class="w-full p-3 border border-gray-300 rounded-xl" onchange="updateTimeSlots()">
+                                    <option value="">Choose Distribution Center</option>
+                                    <option value="rampur">Rampur Primary Center</option>
+                                    <option value="meerut">Meerut District Center</option>
+                                </select>
+                            </div>
+                            
+                            <div id="time-slots-container" class="hidden">
+                                <label class="block text-sm font-medium text-gray-700 mb-3" data-translate="available-slots">Available Time Slots</label>
+                                <div id="time-slots" class="grid grid-cols-2 gap-2">
+                                    <!-- Time slots will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <button onclick="bookSlot()" id="book-slot-btn" class="btn-primary w-full" disabled>
+                                <i class="fas fa-calendar-plus mr-2"></i>
+                                <span data-translate="book-slot">Book Slot</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Distribution Centers with Time Slot Availability -->
+        <div class="card slide-in mb-8">
+            <h3 class="text-xl font-bold text-gray-900 mb-6" data-translate="distribution-centers">Distribution Centers</h3>
+            
+            <div class="space-y-6">
+                <!-- Rampur Primary Center -->
+                <div class="p-6 border border-gray-200 rounded-xl">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h4 class="font-semibold text-gray-900 text-lg">Rampur Primary Center</h4>
+                            <p class="text-sm text-gray-600 mb-2">Village Road, Rampur - 250001</p>
+                            <div class="flex items-center gap-4 text-xs text-gray-500">
+                                <span><i class="fas fa-clock mr-1"></i>9 AM - 5 PM</span>
+                                <span><i class="fas fa-phone mr-1"></i>+91 98765 43210</span>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium" data-translate="open">Open</span>
+                    </div>
+                    
+                    <!-- Time Slot Availability -->
+                    <div class="mb-4">
+                        <h5 class="font-medium text-gray-700 mb-3" data-translate="todays-availability">Today's Availability</h5>
+                        <div class="grid grid-cols-4 gap-2">
+                            <div class="text-center p-2 bg-green-50 border border-green-200 rounded-lg">
+                                <div class="text-xs font-medium text-green-800">9-10 AM</div>
+                                <div class="text-xs text-green-600" data-translate="free">Free</div>
+                            </div>
+                            <div class="text-center p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                <div class="text-xs font-medium text-yellow-800">10-11 AM</div>
+                                <div class="text-xs text-yellow-600" data-translate="moderate">Moderate</div>
+                            </div>
+                            <div class="text-center p-2 bg-red-50 border border-red-200 rounded-lg">
+                                <div class="text-xs font-medium text-red-800">11-12 PM</div>
+                                <div class="text-xs text-red-600" data-translate="busy">Busy</div>
+                            </div>
+                            <div class="text-center p-2 bg-green-50 border border-green-200 rounded-lg">
+                                <div class="text-xs font-medium text-green-800">12-1 PM</div>
+                                <div class="text-xs text-green-600" data-translate="free">Free</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <button onclick="bookSlotForCenter('rampur')" class="btn-primary text-sm flex-1">
+                            <i class="fas fa-calendar-plus mr-1"></i>
+                            <span data-translate="book-slot">Book Slot</span>
+                        </button>
+                        <button class="btn-secondary text-sm flex-1">
                             <i class="fas fa-directions mr-1"></i>
                             <span data-translate="get-directions">Get Directions</span>
                         </button>
                     </div>
+                </div>
+                
+                <!-- Meerut District Center -->
+                <div class="p-6 border border-gray-200 rounded-xl">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h4 class="font-semibold text-gray-900 text-lg">Meerut District Center</h4>
+                            <p class="text-sm text-gray-600 mb-2">Civil Lines, Meerut - 250001</p>
+                            <div class="flex items-center gap-4 text-xs text-gray-500">
+                                <span><i class="fas fa-clock mr-1"></i>8 AM - 6 PM</span>
+                                <span><i class="fas fa-phone mr-1"></i>+91 98765 43211</span>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium" data-translate="busy">Busy</span>
+                    </div>
                     
-                    <div class="p-4 border border-gray-200 rounded-xl">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-semibold text-gray-900">Meerut District Center</h4>
-                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium" data-translate="busy">Busy</span>
+                    <!-- Time Slot Availability -->
+                    <div class="mb-4">
+                        <h5 class="font-medium text-gray-700 mb-3" data-translate="todays-availability">Today's Availability</h5>
+                        <div class="grid grid-cols-4 gap-2">
+                            <div class="text-center p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                <div class="text-xs font-medium text-yellow-800">8-9 AM</div>
+                                <div class="text-xs text-yellow-600" data-translate="moderate">Moderate</div>
+                            </div>
+                            <div class="text-center p-2 bg-red-50 border border-red-200 rounded-lg">
+                                <div class="text-xs font-medium text-red-800">9-10 AM</div>
+                                <div class="text-xs text-red-600" data-translate="busy">Busy</div>
+                            </div>
+                            <div class="text-center p-2 bg-red-50 border border-red-200 rounded-lg">
+                                <div class="text-xs font-medium text-red-800">10-11 AM</div>
+                                <div class="text-xs text-red-600" data-translate="busy">Busy</div>
+                            </div>
+                            <div class="text-center p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                <div class="text-xs font-medium text-yellow-800">11-12 PM</div>
+                                <div class="text-xs text-yellow-600" data-translate="moderate">Moderate</div>
+                            </div>
                         </div>
-                        <p class="text-sm text-gray-600 mb-2">Civil Lines, Meerut - 250001</p>
-                        <div class="flex items-center gap-4 text-xs text-gray-500 mb-3">
-                            <span><i class="fas fa-clock mr-1"></i>8 AM - 6 PM</span>
-                            <span><i class="fas fa-phone mr-1"></i>+91 98765 43211</span>
-                        </div>
-                        <button class="btn-secondary text-sm w-full">
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <button onclick="bookSlotForCenter('meerut')" class="btn-primary text-sm flex-1">
+                            <i class="fas fa-calendar-plus mr-1"></i>
+                            <span data-translate="book-slot">Book Slot</span>
+                        </button>
+                        <button class="btn-secondary text-sm flex-1">
                             <i class="fas fa-directions mr-1"></i>
                             <span data-translate="get-directions">Get Directions</span>
                         </button>
@@ -536,6 +714,34 @@
         let currentLanguage = 'en';
         let farmerData = {};
         let creditBalance = 0;
+        let selectedTimeSlot = null;
+        let currentBooking = null;
+
+        // Time slots data
+        const timeSlots = {
+            rampur: [
+                { time: '9:00-10:00', label: '9:00 AM - 10:00 AM', availability: 'free', bookings: 2 },
+                { time: '10:00-11:00', label: '10:00 AM - 11:00 AM', availability: 'moderate', bookings: 8 },
+                { time: '11:00-12:00', label: '11:00 AM - 12:00 PM', availability: 'busy', bookings: 15 },
+                { time: '12:00-13:00', label: '12:00 PM - 1:00 PM', availability: 'free', bookings: 3 },
+                { time: '13:00-14:00', label: '1:00 PM - 2:00 PM', availability: 'moderate', bookings: 7 },
+                { time: '14:00-15:00', label: '2:00 PM - 3:00 PM', availability: 'free', bookings: 1 },
+                { time: '15:00-16:00', label: '3:00 PM - 4:00 PM', availability: 'moderate', bookings: 6 },
+                { time: '16:00-17:00', label: '4:00 PM - 5:00 PM', availability: 'free', bookings: 4 }
+            ],
+            meerut: [
+                { time: '8:00-9:00', label: '8:00 AM - 9:00 AM', availability: 'moderate', bookings: 12 },
+                { time: '9:00-10:00', label: '9:00 AM - 10:00 AM', availability: 'busy', bookings: 18 },
+                { time: '10:00-11:00', label: '10:00 AM - 11:00 AM', availability: 'busy', bookings: 20 },
+                { time: '11:00-12:00', label: '11:00 AM - 12:00 PM', availability: 'moderate', bookings: 10 },
+                { time: '12:00-13:00', label: '12:00 PM - 1:00 PM', availability: 'free', bookings: 5 },
+                { time: '13:00-14:00', label: '1:00 PM - 2:00 PM', availability: 'moderate', bookings: 8 },
+                { time: '14:00-15:00', label: '2:00 PM - 3:00 PM', availability: 'free', bookings: 3 },
+                { time: '15:00-16:00', label: '3:00 PM - 4:00 PM', availability: 'moderate', bookings: 9 },
+                { time: '16:00-17:00', label: '4:00 PM - 5:00 PM', availability: 'free', bookings: 2 },
+                { time: '17:00-18:00', label: '5:00 PM - 6:00 PM', availability: 'moderate', bookings: 7 }
+            ]
+        };
 
         // Language translations
         const translations = {
@@ -600,7 +806,25 @@
                 'wheat-desc': 'Additional wheat quota for this month',
                 'sugar-desc': 'Additional sugar quota for this month',
                 'redeem': 'Redeem',
-                'current-balance': 'Current Balance'
+                'current-balance': 'Current Balance',
+                'slot-booking': 'Slot Booking',
+                'booking-confirmed': 'Booking Confirmed',
+                'date': 'Date',
+                'time-slot': 'Time Slot',
+                'center': 'Center',
+                'modify': 'Modify',
+                'cancel': 'Cancel',
+                'select-date': 'Select Date',
+                'select-center': 'Select Center',
+                'available-slots': 'Available Time Slots',
+                'book-slot': 'Book Slot',
+                'todays-availability': "Today's Availability",
+                'free': 'Free',
+                'moderate': 'Moderate',
+                'slot-booked': 'Slot booked successfully!',
+                'booking-cancelled': 'Booking cancelled successfully',
+                'select-time-slot': 'Please select a time slot',
+                'no-slots-available': 'No slots available for selected date'
             },
             hi: {
                 'ration-distribution': 'राशन वितरण',
@@ -663,7 +887,25 @@
                 'wheat-desc': 'इस महीने के लिए अतिरिक्त गेहूं कोटा',
                 'sugar-desc': 'इस महीने के लिए अतिरिक्त चीनी कोटा',
                 'redeem': 'रिडीम करें',
-                'current-balance': 'वर्तमान शेष'
+                'current-balance': 'वर्तमान शेष',
+                'slot-booking': 'स्लॉट बुकिंग',
+                'booking-confirmed': 'बुकिंग पुष्ट',
+                'date': 'दिनांक',
+                'time-slot': 'समय स्लॉट',
+                'center': 'केंद्र',
+                'modify': 'संशोधित करें',
+                'cancel': 'रद्द करें',
+                'select-date': 'दिनांक चुनें',
+                'select-center': 'केंद्र चुनें',
+                'available-slots': 'उपलब्ध समय स्लॉट',
+                'book-slot': 'स्लॉट बुक करें',
+                'todays-availability': 'आज की उपलब्धता',
+                'free': 'खाली',
+                'moderate': 'मध्यम',
+                'slot-booked': 'स्लॉट सफलतापूर्वक बुक हो गया!',
+                'booking-cancelled': 'बुकिंग सफलतापूर्वक रद्द हो गई',
+                'select-time-slot': 'कृपया समय स्लॉट चुनें',
+                'no-slots-available': 'चयनित दिनांक के लिए कोई स्लॉट उपलब्ध नहीं'
             },
             te: {
                 'ration-distribution': 'రేషన్ పంపిణీ',
@@ -726,7 +968,25 @@
                 'wheat-desc': 'ఈ నెలకు అదనపు గోధుమ కోటా',
                 'sugar-desc': 'ఈ నెలకు అదనపు చక్కెర కోటా',
                 'redeem': 'రిడీమ్ చేయండి',
-                'current-balance': 'ప్రస్తుత బ్యాలెన్స్'
+                'current-balance': 'ప్రస్తుత బ్యాలెన్స్',
+                'slot-booking': 'స్లాట్ బుకింగ్',
+                'booking-confirmed': 'బుకింగ్ ధృవీకరించబడింది',
+                'date': 'తేదీ',
+                'time-slot': 'టైమ్ స్లాట్',
+                'center': 'కేంద్రం',
+                'modify': 'మార్చండి',
+                'cancel': 'రద్దు చేయండి',
+                'select-date': 'తేదీని ఎంచుకోండి',
+                'select-center': 'కేంద్రాన్ని ఎంచుకోండి',
+                'available-slots': 'అందుబాటులో ఉన్న టైమ్ స్లాట్లు',
+                'book-slot': 'స్లాట్ బుక్ చేయండి',
+                'todays-availability': 'నేటి అందుబాటు',
+                'free': 'ఖాళీ',
+                'moderate': 'మధ్యస్థ',
+                'slot-booked': 'స్లాట్ విజయవంతంగా బుక్ చేయబడింది!',
+                'booking-cancelled': 'బుకింగ్ విజయవంతంగా రద్దు చేయబడింది',
+                'select-time-slot': 'దయచేసి టైమ్ స్లాట్‌ను ఎంచుకోండి',
+                'no-slots-available': 'ఎంచుకున్న తేదీకి స్లాట్లు అందుబాటులో లేవు'
             }
         };
 
@@ -744,7 +1004,173 @@
             creditBalance = parseInt(localStorage.getItem('creditBalance')) || 30;
             updateCreditDisplay();
             
+            // Load existing booking
+            currentBooking = JSON.parse(localStorage.getItem('rationBooking')) || null;
+            updateBookingDisplay();
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('booking-date').min = today;
+            
             translatePage();
+        }
+
+        // Update booking display
+        function updateBookingDisplay() {
+            const currentBookingDiv = document.getElementById('current-booking');
+            const bookingForm = document.getElementById('booking-form');
+            
+            if (currentBooking) {
+                currentBookingDiv.classList.remove('hidden');
+                bookingForm.classList.add('hidden');
+                
+                document.getElementById('booked-date').textContent = currentBooking.date;
+                document.getElementById('booked-time').textContent = currentBooking.timeLabel;
+                document.getElementById('booked-center').textContent = currentBooking.centerName;
+            } else {
+                currentBookingDiv.classList.add('hidden');
+                bookingForm.classList.remove('hidden');
+            }
+        }
+
+        // Update time slots based on selected center
+        function updateTimeSlots() {
+            const centerSelect = document.getElementById('booking-center');
+            const timeSlotsContainer = document.getElementById('time-slots-container');
+            const timeSlotsDiv = document.getElementById('time-slots');
+            const bookButton = document.getElementById('book-slot-btn');
+            
+            const selectedCenter = centerSelect.value;
+            
+            if (!selectedCenter) {
+                timeSlotsContainer.classList.add('hidden');
+                bookButton.disabled = true;
+                return;
+            }
+            
+            timeSlotsContainer.classList.remove('hidden');
+            timeSlotsDiv.innerHTML = '';
+            selectedTimeSlot = null;
+            
+            const slots = timeSlots[selectedCenter];
+            
+            slots.forEach(slot => {
+                const slotDiv = document.createElement('div');
+                slotDiv.className = `time-slot ${slot.availability === 'busy' ? 'unavailable' : ''}`;
+                slotDiv.innerHTML = `
+                    <div class="font-medium text-sm">${slot.label}</div>
+                    <div class="text-xs mt-1 ${getAvailabilityColor(slot.availability)}">${getAvailabilityText(slot.availability)}</div>
+                    <div class="text-xs text-gray-500">${slot.bookings} bookings</div>
+                `;
+                
+                if (slot.availability !== 'busy') {
+                    slotDiv.onclick = () => selectTimeSlot(slot, slotDiv);
+                }
+                
+                timeSlotsDiv.appendChild(slotDiv);
+            });
+        }
+
+        // Get availability color class
+        function getAvailabilityColor(availability) {
+            switch(availability) {
+                case 'free': return 'text-green-600';
+                case 'moderate': return 'text-yellow-600';
+                case 'busy': return 'text-red-600';
+                default: return 'text-gray-600';
+            }
+        }
+
+        // Get availability text
+        function getAvailabilityText(availability) {
+            const texts = {
+                'free': translations[currentLanguage]['free'] || 'Free',
+                'moderate': translations[currentLanguage]['moderate'] || 'Moderate',
+                'busy': translations[currentLanguage]['busy'] || 'Busy'
+            };
+            return texts[availability] || availability;
+        }
+
+        // Select time slot
+        function selectTimeSlot(slot, slotDiv) {
+            // Remove previous selection
+            document.querySelectorAll('.time-slot').forEach(div => {
+                div.classList.remove('selected');
+            });
+            
+            // Select current slot
+            slotDiv.classList.add('selected');
+            selectedTimeSlot = slot;
+            
+            // Enable book button
+            document.getElementById('book-slot-btn').disabled = false;
+        }
+
+        // Book slot
+        function bookSlot() {
+            const dateInput = document.getElementById('booking-date');
+            const centerSelect = document.getElementById('booking-center');
+            
+            if (!dateInput.value || !centerSelect.value || !selectedTimeSlot) {
+                alert(translations[currentLanguage]['select-time-slot'] || 'Please select a time slot');
+                return;
+            }
+            
+            const centerNames = {
+                'rampur': 'Rampur Primary Center',
+                'meerut': 'Meerut District Center'
+            };
+            
+            const booking = {
+                date: new Date(dateInput.value).toLocaleDateString('en-GB'),
+                time: selectedTimeSlot.time,
+                timeLabel: selectedTimeSlot.label,
+                center: centerSelect.value,
+                centerName: centerNames[centerSelect.value],
+                bookedAt: new Date().toISOString()
+            };
+            
+            // Save booking
+            localStorage.setItem('rationBooking', JSON.stringify(booking));
+            currentBooking = booking;
+            
+            // Update display
+            updateBookingDisplay();
+            
+            // Show success message
+            showNotification(translations[currentLanguage]['slot-booked'] || 'Slot booked successfully!', 'success');
+            
+            // Reset form
+            dateInput.value = '';
+            centerSelect.value = '';
+            document.getElementById('time-slots-container').classList.add('hidden');
+            selectedTimeSlot = null;
+        }
+
+        // Book slot for specific center
+        function bookSlotForCenter(centerId) {
+            document.getElementById('booking-center').value = centerId;
+            updateTimeSlots();
+            
+            // Scroll to booking form
+            document.getElementById('booking-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Modify booking
+        function modifyBooking() {
+            if (confirm('Are you sure you want to modify your booking?')) {
+                cancelBooking();
+            }
+        }
+
+        // Cancel booking
+        function cancelBooking() {
+            if (confirm('Are you sure you want to cancel your booking?')) {
+                localStorage.removeItem('rationBooking');
+                currentBooking = null;
+                updateBookingDisplay();
+                showNotification(translations[currentLanguage]['booking-cancelled'] || 'Booking cancelled successfully', 'info');
+            }
         }
 
         // Update farmer information
