@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Portal - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&family=Noto+Sans+Telugu:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 24px;
+            padding: 40px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #22c55e, #3b82f6, #8b5cf6);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.15);
+            border-color: #22c55e;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);
+        }
+        
+        .floating-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hindi-font { font-family: 'Noto Sans Devanagari', sans-serif; }
+        .telugu-font { font-family: 'Noto Sans Telugu', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 via-white to-blue-50 min-h-screen">
+    <!-- Header -->
+    <div class="gradient-bg text-white p-6 shadow-2xl">
+        <div class="container mx-auto">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-user text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold" id="welcome-message">Welcome, Farmer!</h1>
+                        <p class="text-white/90 flex items-center gap-2 mt-1" id="farmer-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Village, District</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <button onclick="changeLanguage()" class="p-3 bg-white/20 rounded-xl hover:bg-white/30 transition-colors" title="Change Language">
+                        <i class="fas fa-language"></i>
+                    </button>
+                    <button onclick="logout()" class="p-3 bg-white/20 rounded-xl hover:bg-white/30 transition-colors" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div class="stat-card">
+                <div class="flex items-center justify-between mb-4">
+                    <i class="fas fa-chart-line text-3xl text-green-500"></i>
+                    <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium">+15%</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-1" data-translate="monthly-income">Monthly Income</p>
+                <p class="text-2xl font-bold text-gray-900">₹45,230</p>
+            </div>
+            
+            <div class="stat-card">
+                <div class="flex items-center justify-between mb-4">
+                    <i class="fas fa-seedling text-3xl text-orange-500"></i>
+                    <span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full font-medium" data-translate="rabi">Rabi</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-1" data-translate="current-crop">Current Crop</p>
+                <p class="text-2xl font-bold text-gray-900" data-translate="wheat">Wheat</p>
+            </div>
+            
+            <div class="stat-card">
+                <div class="flex items-center justify-between mb-4">
+                    <i class="fas fa-box text-3xl text-blue-500"></i>
+                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium" data-translate="available">Available</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-1" data-translate="ration-status">Ration Status</p>
+                <p class="text-2xl font-bold text-gray-900">5 kg</p>
+            </div>
+            
+            <div class="stat-card">
+                <div class="flex items-center justify-between mb-4">
+                    <i class="fas fa-cloud-sun text-3xl text-purple-500"></i>
+                    <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full font-medium" data-translate="today">Today</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-1" data-translate="weather">Weather</p>
+                <p class="text-2xl font-bold text-gray-900">28°C</p>
+            </div>
+        </div>
+
+        <!-- Main Features -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2 text-center" data-translate="select-service">Select a Service</h2>
+            <p class="text-gray-600 text-center mb-12" data-translate="choose-feature">Choose the feature you want to access</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <!-- Digital Marketplace -->
+            <div class="feature-card slide-in" onclick="openFeature('marketplace')">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 floating-animation">
+                        <i class="fas fa-store text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4" data-translate="digital-marketplace">Digital Marketplace</h3>
+                    <p class="text-gray-600 mb-6" data-translate="marketplace-desc">Sell your crops directly to buyers and get better prices</p>
+                    
+                    <div class="space-y-3 mb-8">
+                        <div class="flex items-center gap-3 text-sm text-gray-700">
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span data-translate="sell-crops">Sell Crops</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm text-gray-700">
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span data-translate="market-rates">Market Rates</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm text-gray-700">
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span data-translate="group-selling">Group Selling</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm text-gray-700">
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span data-translate="online-payment">Online Payment</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary w-full">
+                        <span data-translate="open-marketplace">Open Marketplace</span>
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Ration Distribution -->
+            <div class="feature-card slide-in" onclick="openFeature('ration')" style="animation-delay: 0.2s">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 floating-animation">
+                        <i class="fas fa-box text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4" data-translate="ration-distribution">Ration Distribution</h3>
+                    <p class="text-gray-600 mb-6" data-translate="ration-desc">Access your ration card and government schemes</p>
+                    
+                    <div class="space-y-3 mb-8">
+                        <div class="flex items-center gap-3 text-sm text-gray-700">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <span data-translate="ration-status">Ration Status</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm text-gray-700">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <span data-translate="qr-scan">QR Scan</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm text-gray-700">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <span data-translate="govt-schemes">Government Schemes</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm text-gray-700">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <span data-translate="quota-tracking">Quota Tracking</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary w-full">
+                        <span data-translate="open-ration">Open Ration</span>
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Complaints System -->
+            <div class="feature-card slide-in" onclick="openFeature('complaints')" style="animation-delay: 0.4s">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 floating-animation">
+                        <i class="fas fa-comments text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4" data-translate="complaint-system">Complaint System</h3>
+                    <p class="text-gray-600 mb-6" data-translate="complaints-desc">File complaints and get quick resolution</p>
+                    
+                    <div class="space-y-3 mb-8">
+                        <div class="flex items-center gap-3 text-sm text-gray-700">
+                            <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                            <span data-translate="file-complaint">File Complaint</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm text-gray-700">
+                            <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                            <span data-translate="track-status">Track Status</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm text-gray-700">
+                            <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                            <span data-translate="helpline">Helpline</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm text-gray-700">
+                            <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                            <span data-translate="feedback">Feedback</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary w-full">
+                        <span data-translate="open-complaints">Open Complaints</span>
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let farmerData = {};
+        let currentLanguage = 'en';
+
+        // Language translations
+        const translations = {
+            en: {
+                'welcome': 'Welcome',
+                'monthly-income': 'Monthly Income',
+                'current-crop': 'Current Crop',
+                'ration-status': 'Ration Status',
+                'weather': 'Weather',
+                'rabi': 'Rabi',
+                'available': 'Available',
+                'today': 'Today',
+                'wheat': 'Wheat',
+                'select-service': 'Select a Service',
+                'choose-feature': 'Choose the feature you want to access',
+                'digital-marketplace': 'Digital Marketplace',
+                'marketplace-desc': 'Sell your crops directly to buyers and get better prices',
+                'sell-crops': 'Sell Crops',
+                'market-rates': 'Market Rates',
+                'group-selling': 'Group Selling',
+                'online-payment': 'Online Payment',
+                'open-marketplace': 'Open Marketplace',
+                'ration-distribution': 'Ration Distribution',
+                'ration-desc': 'Access your ration card and government schemes',
+                'qr-scan': 'QR Scan',
+                'govt-schemes': 'Government Schemes',
+                'quota-tracking': 'Quota Tracking',
+                'open-ration': 'Open Ration',
+                'complaint-system': 'Complaint System',
+                'complaints-desc': 'File complaints and get quick resolution',
+                'file-complaint': 'File Complaint',
+                'track-status': 'Track Status',
+                'helpline': 'Helpline',
+                'feedback': 'Feedback',
+                'open-complaints': 'Open Complaints'
+            },
+            hi: {
+                'welcome': 'स्वागत है',
+                'monthly-income': 'मासिक आय',
+                'current-crop': 'वर्तमान फसल',
+                'ration-status': 'राशन स्थिति',
+                'weather': 'मौसम',
+                'rabi': 'रबी',
+                'available': 'उपलब्ध',
+                'today': 'आज',
+                'wheat': 'गेहूं',
+                'select-service': 'सेवा चुनें',
+                'choose-feature': 'जिस सुविधा का उपयोग करना चाहते हैं उसे चुनें',
+                'digital-marketplace': 'डिजिटल मार्केटप्लेस',
+                'marketplace-desc': 'अपनी फसल सीधे खरीदारों को बेचें और बेहतर दाम पाएं',
+                'sell-crops': 'फसल बेचें',
+                'market-rates': 'बाजार भाव',
+                'group-selling': 'समूह बिक्री',
+                'online-payment': 'ऑनलाइन भुगतान',
+                'open-marketplace': 'मार्केटप्लेस खोलें',
+                'ration-distribution': 'राशन वितरण',
+                'ration-desc': 'अपना राशन कार्ड और सरकारी योजनाओं का उपयोग करें',
+                'qr-scan': 'QR स्कैन',
+                'govt-schemes': 'सरकारी योजनाएं',
+                'quota-tracking': 'कोटा ट्रैकिंग',
+                'open-ration': 'राशन खोलें',
+                'complaint-system': 'शिकायत प्रणाली',
+                'complaints-desc': 'शिकायत दर्ज करें और त्वरित समाधान पाएं',
+                'file-complaint': 'शिकायत दर्ज करें',
+                'track-status': 'स्थिति ट्रैक करें',
+                'helpline': 'हेल्पलाइन',
+                'feedback': 'फीडबैक',
+                'open-complaints': 'शिकायत खोलें'
+            },
+            te: {
+                'welcome': 'స్వాగతం',
+                'monthly-income': 'నెలవారీ ఆదాయం',
+                'current-crop': 'ప్రస్తుత పంట',
+                'ration-status': 'రేషన్ స్థితి',
+                'weather': 'వాతావరణం',
+                'rabi': 'రబీ',
+                'available': 'అందుబాటులో',
+                'today': 'ఈరోజు',
+                'wheat': 'గోధుమ',
+                'select-service': 'సేవను ఎంచుకోండి',
+                'choose-feature': 'మీరు యాక్సెస్ చేయాలనుకుంటున్న ఫీచర్‌ను ఎంచుకోండి',
+                'digital-marketplace': 'డిజిటల్ మార్కెట్‌ప్లేస్',
+                'marketplace-desc': 'మీ పంటలను నేరుగా కొనుగోలుదారులకు అమ్మండి మరియు మంచి ధరలు పొందండి',
+                'sell-crops': 'పంటలు అమ్మండి',
+                'market-rates': 'మార్కెట్ రేట్లు',
+                'group-selling': 'గ్రూప్ సెల్లింగ్',
+                'online-payment': 'ఆన్‌లైన్ చెల్లింపు',
+                'open-marketplace': 'మార్కెట్‌ప్లేస్ తెరవండి',
+                'ration-distribution': 'రేషన్ పంపిణీ',
+                'ration-desc': 'మీ రేషన్ కార్డ్ మరియు ప్రభుత్వ పథకాలను యాక్సెస్ చేయండి',
+                'qr-scan': 'QR స్కాన్',
+                'govt-schemes': 'ప్రభుత్వ పథకాలు',
+                'quota-tracking': 'కోటా ట్రాకింగ్',
+                'open-ration': 'రేషన్ తెరవండి',
+                'complaint-system': 'ఫిర్యాదు వ్యవస్థ',
+                'complaints-desc': 'ఫిర్యాదులు దాఖలు చేయండి మరియు త్వరిత పరిష్కారం పొందండి',
+                'file-complaint': 'ఫిర్యాదు దాఖలు చేయండి',
+                'track-status': 'స్థితిని ట్రాక్ చేయండి',
+                'helpline': 'హెల్ప్‌లైన్',
+                'feedback': 'ఫీడ్‌బ్యాక్',
+                'open-complaints': 'ఫిర్యాదులు తెరవండి'
+            }
+        };
+
+        // Load farmer data and language
+        function loadData() {
+            const storedData = localStorage.getItem('farmerData');
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+            
+            if (!isLoggedIn || !storedData) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            farmerData = JSON.parse(storedData);
+            currentLanguage = selectedLanguage;
+            
+            updateUI();
+            translatePage();
+        }
+
+        // Update UI with farmer data
+        function updateUI() {
+            const welcomeMsg = document.getElementById('welcome-message');
+            const locationMsg = document.getElementById('farmer-location');
+            
+            welcomeMsg.textContent = `${translations[currentLanguage]['welcome']}, ${farmerData.name}!`;
+            locationMsg.innerHTML = `
+                <i class="fas fa-map-marker-alt"></i>
+                <span>${farmerData.village}, ${farmerData.district}</span>
+            `;
+        }
+
+        // Translate page content
+        function translatePage() {
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[currentLanguage][key]) {
+                    element.textContent = translations[currentLanguage][key];
+                }
+            });
+            
+            // Apply appropriate font
+            if (currentLanguage === 'hi') {
+                document.body.classList.add('hindi-font');
+                document.body.classList.remove('telugu-font');
+            } else if (currentLanguage === 'te') {
+                document.body.classList.add('telugu-font');
+                document.body.classList.remove('hindi-font');
+            } else {
+                document.body.classList.remove('hindi-font', 'telugu-font');
+            }
+        }
+
+        // Open feature
+        function openFeature(featureId) {
+            // Store current feature selection
+            localStorage.setItem('currentFeature', featureId);
+            
+            // Show loading notification
+            showNotification(`Opening ${getFeatureName(featureId)}...`, 'info');
+            
+            // Redirect to feature page
+            setTimeout(() => {
+                window.location.href = `${featureId}.html`;
+            }, 1500);
+        }
+
+        // Get feature name in current language
+        function getFeatureName(featureId) {
+            const names = {
+                'marketplace': translations[currentLanguage]['digital-marketplace'],
+                'ration': translations[currentLanguage]['ration-distribution'],
+                'complaints': translations[currentLanguage]['complaint-system']
+            };
+            return names[featureId] || featureId;
+        }
+
+        // Change language
+        function changeLanguage() {
+            window.location.href = 'language-selection.html';
+        }
+
+        // Logout
+        function logout() {
+            const confirmMsg = currentLanguage === 'hi' ? 'क्या आप वाकई लॉगआउट करना चाहते हैं?' : 
+                              currentLanguage === 'te' ? 'మీరు నిజంగా లాగ్అవుట్ చేయాలనుకుంటున్नారా?' : 
+                              'Are you sure you want to logout?';
+            
+            if (confirm(confirmMsg)) {
+                localStorage.removeItem('farmerData');
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('selectedLanguage');
+                localStorage.removeItem('currentFeature');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-2xl shadow-2xl max-w-sm slide-in`;
+            
+            const colors = {
+                success: 'bg-green-500 text-white',
+                error: 'bg-red-500 text-white',
+                info: 'bg-blue-500 text-white',
+                warning: 'bg-yellow-500 text-black'
+            };
+            
+            const icons = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                info: 'fas fa-info-circle',
+                warning: 'fas fa-exclamation-triangle'
+            };
+            
+            notification.className += ` ${colors[type]}`;
+            notification.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <i class="${icons[type]}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "agritech-rural-platform",
+  "version": "1.0.0",
+  "description": "Unified Agritech & Rural Services Platform - Digital Marketplace, AI Advisory, and Welfare Distribution",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\" \"npm run dev:ai\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "dev:ai": "cd ai-service && python app.py",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start",
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install && cd ../ai-service && pip install -r requirements.txt"
+  },
+  "keywords": ["agritech", "rural", "marketplace", "ai", "welfare", "farmers"],
+  "author": "Agritech Platform Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

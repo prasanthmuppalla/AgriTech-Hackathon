@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Marketplace - Farmer Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&family=Noto+Sans+Telugu:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #374151;
+            font-weight: 500;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .btn-secondary:hover {
+            border-color: #22c55e;
+            color: #22c55e;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+        }
+        
+        .slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hindi-font { font-family: 'Noto Sans Devanagari', sans-serif; }
+        .telugu-font { font-family: 'Noto Sans Telugu', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 via-white to-blue-50 min-h-screen">
+    <!-- Header -->
+    <div class="gradient-bg text-white p-6 shadow-2xl">
+        <div class="container mx-auto">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <button onclick="goBack()" class="p-3 bg-white/20 rounded-xl hover:bg-white/30 transition-colors">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-store text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold" data-translate="digital-marketplace">Digital Marketplace</h1>
+                        <p class="text-white/90" data-translate="marketplace-subtitle">Sell crops and get better prices</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <button onclick="changeLanguage()" class="p-3 bg-white/20 rounded-xl hover:bg-white/30 transition-colors">
+                        <i class="fas fa-language"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Quick Actions -->
+        <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <!-- Sell Crops -->
+            <div class="card slide-in">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-seedling text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2" data-translate="sell-your-crops">Sell Your Crops</h3>
+                    <p class="text-gray-600" data-translate="create-listing">Create a new listing for your harvest</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="crop-type">Crop Type</label>
+                        <select class="input-field">
+                            <option data-translate="select-crop">Select Crop</option>
+                            <option data-translate="wheat">Wheat</option>
+                            <option data-translate="rice">Rice</option>
+                            <option data-translate="tomato">Tomato</option>
+                            <option data-translate="onion">Onion</option>
+                            <option data-translate="potato">Potato</option>
+                        </select>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="quantity">Quantity</label>
+                            <input type="number" class="input-field" placeholder="100">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="unit">Unit</label>
+                            <select class="input-field">
+                                <option>kg</option>
+                                <option data-translate="quintal">Quintal</option>
+                                <option data-translate="ton">Ton</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" data-translate="expected-price">Expected Price (₹)</label>
+                        <input type="number" class="input-field" placeholder="2500">
+                    </div>
+                    
+                    <button class="btn-primary w-full">
+                        <i class="fas fa-plus mr-2"></i>
+                        <span data-translate="create-listing">Create Listing</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Market Prices -->
+            <div class="card slide-in">
+                <h3 class="text-xl font-bold text-gray-900 mb-6" data-translate="todays-prices">Today's Market Prices</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                        <div>
+                            <span class="font-medium" data-translate="wheat">Wheat</span>
+                            <p class="text-sm text-gray-600" data-translate="per-quintal">per quintal</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-bold text-green-600 text-lg">₹2,350</span>
+                            <p class="text-xs text-green-600">+5%</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                        <div>
+                            <span class="font-medium" data-translate="rice">Rice</span>
+                            <p class="text-sm text-gray-600" data-translate="per-quintal">per quintal</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-bold text-green-600 text-lg">₹2,150</span>
+                            <p class="text-xs text-red-600">-2%</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                        <div>
+                            <span class="font-medium" data-translate="tomato">Tomato</span>
+                            <p class="text-sm text-gray-600" data-translate="per-kg">per kg</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-bold text-green-600 text-lg">₹45</span>
+                            <p class="text-xs text-green-600">+8%</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                        <div>
+                            <span class="font-medium" data-translate="onion">Onion</span>
+                            <p class="text-sm text-gray-600" data-translate="per-kg">per kg</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-bold text-green-600 text-lg">₹35</span>
+                            <p class="text-xs text-green-600">+3%</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn-secondary w-full mt-6">
+                    <i class="fas fa-chart-line mr-2"></i>
+                    <span data-translate="view-price-trends">View Price Trends</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- My Listings -->
+        <div class="card slide-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900" data-translate="my-listings">My Listings</h3>
+                <button class="btn-secondary">
+                    <i class="fas fa-plus mr-2"></i>
+                    <span data-translate="add-new">Add New</span>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-4 bg-green-50 border-l-4 border-green-500 rounded-xl">
+                    <div>
+                        <h4 class="font-semibold text-gray-900" data-translate="wheat">Wheat - 50 Quintal</h4>
+                        <p class="text-sm text-gray-600">₹2,300 per quintal</p>
+                        <p class="text-xs text-green-600" data-translate="active">Active • 2 days ago</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="btn-secondary text-sm">
+                            <i class="fas fa-edit mr-1"></i>
+                            <span data-translate="edit">Edit</span>
+                        </button>
+                        <button class="btn-primary text-sm">
+                            <i class="fas fa-eye mr-1"></i>
+                            <span data-translate="view">View</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between p-4 bg-blue-50 border-l-4 border-blue-500 rounded-xl">
+                    <div>
+                        <h4 class="font-semibold text-gray-900" data-translate="rice">Rice - 30 Quintal</h4>
+                        <p class="text-sm text-gray-600">₹2,100 per quintal</p>
+                        <p class="text-xs text-blue-600" data-translate="sold">Sold • 1 week ago</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="btn-secondary text-sm">
+                            <i class="fas fa-receipt mr-1"></i>
+                            <span data-translate="invoice">Invoice</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Group Selling -->
+        <div class="card slide-in mt-8">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center">
+                    <i class="fas fa-users text-purple-600 text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900" data-translate="group-selling">Group Selling</h3>
+                    <p class="text-gray-600" data-translate="join-other-farmers">Join with other farmers for better prices</p>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="p-4 bg-purple-50 rounded-xl">
+                    <h4 class="font-semibold text-purple-800 mb-2" data-translate="wheat-group">Wheat Group - Meerut</h4>
+                    <p class="text-sm text-purple-700 mb-3">Target: 500 Quintal | Current: 320 Quintal</p>
+                    <div class="w-full bg-purple-200 rounded-full h-2 mb-3">
+                        <div class="bg-purple-600 h-2 rounded-full" style="width: 64%"></div>
+                    </div>
+                    <button class="btn-primary text-sm w-full">
+                        <span data-translate="join-group">Join Group</span>
+                    </button>
+                </div>
+                
+                <div class="p-4 bg-green-50 rounded-xl">
+                    <h4 class="font-semibold text-green-800 mb-2" data-translate="tomato-group">Tomato Group - Ghaziabad</h4>
+                    <p class="text-sm text-green-700 mb-3">Target: 200 Quintal | Current: 180 Quintal</p>
+                    <div class="w-full bg-green-200 rounded-full h-2 mb-3">
+                        <div class="bg-green-600 h-2 rounded-full" style="width: 90%"></div>
+                    </div>
+                    <button class="btn-primary text-sm w-full">
+                        <span data-translate="join-group">Join Group</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLanguage = 'en';
+
+        // Language translations
+        const translations = {
+            en: {
+                'digital-marketplace': 'Digital Marketplace',
+                'marketplace-subtitle': 'Sell crops and get better prices',
+                'sell-your-crops': 'Sell Your Crops',
+                'create-listing': 'Create a new listing for your harvest',
+                'crop-type': 'Crop Type',
+                'select-crop': 'Select Crop',
+                'wheat': 'Wheat',
+                'rice': 'Rice',
+                'tomato': 'Tomato',
+                'onion': 'Onion',
+                'potato': 'Potato',
+                'quantity': 'Quantity',
+                'unit': 'Unit',
+                'quintal': 'Quintal',
+                'ton': 'Ton',
+                'expected-price': 'Expected Price (₹)',
+                'todays-prices': "Today's Market Prices",
+                'per-quintal': 'per quintal',
+                'per-kg': 'per kg',
+                'view-price-trends': 'View Price Trends',
+                'my-listings': 'My Listings',
+                'add-new': 'Add New',
+                'active': 'Active',
+                'sold': 'Sold',
+                'edit': 'Edit',
+                'view': 'View',
+                'invoice': 'Invoice',
+                'group-selling': 'Group Selling',
+                'join-other-farmers': 'Join with other farmers for better prices',
+                'wheat-group': 'Wheat Group - Meerut',
+                'tomato-group': 'Tomato Group - Ghaziabad',
+                'join-group': 'Join Group'
+            },
+            hi: {
+                'digital-marketplace': 'डिजिटल मार्केटप्लेस',
+                'marketplace-subtitle': 'फसल बेचें और बेहतर दाम पाएं',
+                'sell-your-crops': 'अपनी फसल बेचें',
+                'create-listing': 'अपनी फसल के लिए नई लिस्टिंग बनाएं',
+                'crop-type': 'फसल का प्रकार',
+                'select-crop': 'फसल चुनें',
+                'wheat': 'गेहूं',
+                'rice': 'चावल',
+                'tomato': 'टमाटर',
+                'onion': 'प्याज',
+                'potato': 'आलू',
+                'quantity': 'मात्रा',
+                'unit': 'इकाई',
+                'quintal': 'क्विंटल',
+                'ton': 'टन',
+                'expected-price': 'अपेक्षित मूल्य (₹)',
+                'todays-prices': 'आज के बाजार भाव',
+                'per-quintal': 'प्रति क्विंटल',
+                'per-kg': 'प्रति किलो',
+                'view-price-trends': 'मूल्य रुझान देखें',
+                'my-listings': 'मेरी लिस्टिंग',
+                'add-new': 'नया जोड़ें',
+                'active': 'सक्रिय',
+                'sold': 'बेचा गया',
+                'edit': 'संपादित करें',
+                'view': 'देखें',
+                'invoice': 'बिल',
+                'group-selling': 'समूह बिक्री',
+                'join-other-farmers': 'बेहतर दामों के लिए अन्य किसानों के साथ जुड़ें',
+                'wheat-group': 'गेहूं समूह - मेरठ',
+                'tomato-group': 'टमाटर समूह - गाजियाबाद',
+                'join-group': 'समूह में शामिल हों'
+            },
+            te: {
+                'digital-marketplace': 'డిజిటల్ మార్కెట్‌ప్లేస్',
+                'marketplace-subtitle': 'పంటలు అమ్మండి మరియు మంచి ధరలు పొందండి',
+                'sell-your-crops': 'మీ పంటలను అమ్మండి',
+                'create-listing': 'మీ పంట కోసం కొత్త లిస్టింగ్ సృష్టించండి',
+                'crop-type': 'పంట రకం',
+                'select-crop': 'పంట ఎంచుకోండి',
+                'wheat': 'గోధుమ',
+                'rice': 'వరి',
+                'tomato': 'టమోటా',
+                'onion': 'ఉల్లిపాయ',
+                'potato': 'బంగాళాదుంప',
+                'quantity': 'పరిమాణం',
+                'unit': 'యూనిట్',
+                'quintal': 'క్వింటల్',
+                'ton': 'టన్ను',
+                'expected-price': 'ఆశించిన ధర (₹)',
+                'todays-prices': 'నేటి మార్కెట్ ధరలు',
+                'per-quintal': 'క్వింటల్‌కు',
+                'per-kg': 'కిలోకు',
+                'view-price-trends': 'ధర ధోరణులను చూడండి',
+                'my-listings': 'నా లిస్టింగ్‌లు',
+                'add-new': 'కొత్తది జోడించండి',
+                'active': 'క్రియాశీల',
+                'sold': 'అమ్మబడింది',
+                'edit': 'సవరించండి',
+                'view': 'చూడండి',
+                'invoice': 'బిల్లు',
+                'group-selling': 'గ్రూప్ సెల్లింగ్',
+                'join-other-farmers': 'మంచి ధరల కోసం ఇతర రైతులతో చేరండి',
+                'wheat-group': 'గోధుమ గ్రూప్ - మీరట్',
+                'tomato-group': 'టమోటా గ్రూప్ - గాజియాబాద్',
+                'join-group': 'గ్రూప్‌లో చేరండి'
+            }
+        };
+
+        // Load language and translate page
+        function loadLanguage() {
+            currentLanguage = localStorage.getItem('selectedLanguage') || 'en';
+            translatePage();
+        }
+
+        // Translate page content
+        function translatePage() {
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[currentLanguage][key]) {
+                    element.textContent = translations[currentLanguage][key];
+                }
+            });
+            
+            // Apply appropriate font
+            if (currentLanguage === 'hi') {
+                document.body.classList.add('hindi-font');
+                document.body.classList.remove('telugu-font');
+            } else if (currentLanguage === 'te') {
+                document.body.classList.add('telugu-font');
+                document.body.classList.remove('hindi-font');
+            } else {
+                document.body.classList.remove('hindi-font', 'telugu-font');
+            }
+        }
+
+        // Go back to dashboard
+        function goBack() {
+            window.location.href = 'dashboard.html';
+        }
+
+        // Change language
+        function changeLanguage() {
+            window.location.href = 'language-selection.html';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            if (!localStorage.getItem('isLoggedIn')) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            loadLanguage();
+        });
+    </script>
+</body>
+</html>

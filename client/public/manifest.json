@@ -1,0 +1,25 @@
+{
+  "name": "Agritech Rural Platform",
+  "short_name": "AgriPlatform",
+  "description": "Unified platform for farmers - marketplace, advisory, and welfare services",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#22c55e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["agriculture", "business", "productivity"],
+  "lang": "en",
+  "dir": "ltr"
+}
